@@ -108,16 +108,28 @@ def check_winner(player):
 
 
 def make_computer_move():
-    if get_winning_move("O") is not None and check_unoccupied_places(get_winning_move("O")):
-        update_board(o=get_winning_move("O"))
-    elif get_winning_move("X") is not None and check_unoccupied_places(get_winning_move("X")):
-        update_board(o=get_winning_move("X"))
-    elif check_unoccupied_places(0, 2, 6, 8):
-        update_board(o=random.choice(check_unoccupied_places(0, 2, 6, 8)))
-    elif check_unoccupied_places(4):
-        update_board(o=random.choice(check_unoccupied_places(4)))
-    elif check_unoccupied_places(1, 3, 5, 7):
-        update_board(o=random.choice(check_unoccupied_places(1, 3, 5, 7)))
+    if player_char["Computer"] == "O":
+        if get_winning_move("O") is not None and check_unoccupied_places(get_winning_move("O")):
+            update_board(o=get_winning_move("O"))
+        elif get_winning_move("X") is not None and check_unoccupied_places(get_winning_move("X")):
+            update_board(o=get_winning_move("X"))
+        elif check_unoccupied_places(0, 2, 6, 8):
+            update_board(o=random.choice(check_unoccupied_places(0, 2, 6, 8)))
+        elif check_unoccupied_places(4):
+            update_board(o=random.choice(check_unoccupied_places(4)))
+        elif check_unoccupied_places(1, 3, 5, 7):
+            update_board(o=random.choice(check_unoccupied_places(1, 3, 5, 7)))
+    elif player_char["Computer"] == "X":
+        if get_winning_move("X") is not None and check_unoccupied_places(get_winning_move("X")):
+            update_board(x=get_winning_move("X"))
+        elif get_winning_move("O") is not None and check_unoccupied_places(get_winning_move("O")):
+            update_board(x=get_winning_move("O"))
+        elif check_unoccupied_places(0, 2, 6, 8):
+            update_board(x=random.choice(check_unoccupied_places(0, 2, 6, 8)))
+        elif check_unoccupied_places(4):
+            update_board(x=random.choice(check_unoccupied_places(4)))
+        elif check_unoccupied_places(1, 3, 5, 7):
+            update_board(x=random.choice(check_unoccupied_places(1, 3, 5, 7)))
 
 
 def check_input(choice):
@@ -130,31 +142,54 @@ def check_input(choice):
     return None
 
 
+def determine_player_character():
+    global player_char
+    player_char = {"Computer": "", "User": ""}
+    while True:
+        char = input("Select your character: (X or O) \n").upper()
+        if char == "X":
+            player_char["User"] = "X"
+            player_char["Computer"] = "O"
+            break
+        elif char == "O":
+            player_char["User"] = "O"
+            player_char["Computer"] = "X"
+            break
+        else:
+            continue
+
+
 def main():
     os.system("clear")
     print(termcolor.colored("<< Welcome to Tic-tac-toe Game >>", "green"))
     time.sleep(3)
+    os.system("clear")
+    determine_player_character()
     # Determine randomly whether the computer or the player goes first.
     turn = random.choice([0, 1])  # 0 => Player (X) , 1 => Computer (O)
     if turn == 1:
         make_computer_move()
-        print("Computer did its turn, now it's your turn.")
+        print("Computer did its move, now it's your turn.")
     else:
         update_board()
         print("It's your turn :)")
     while True:
         choice = input()
         if check_input(choice) is None:
-            update_board(x=int(choice))
+            if player_char["User"] == "X":
+                update_board(x=int(choice))
+            else:
+                update_board(o=int(choice))
+
         else:
             print(check_input(choice))
             continue
-        if check_winner("X") == 1:
+        if check_winner(player_char["User"]) == 1:
             print("User won :)")
             break
 
         make_computer_move()
-        if check_winner("O") == 1:
+        if check_winner(player_char["Computer"]) == 1:
             print("Computer won :)")
             break
         if not check_unoccupied_places(0, 1, 2, 3, 4, 5, 6, 7, 8):
