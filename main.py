@@ -128,7 +128,7 @@ def make_computer_move():
             update_board(o=position)
         elif check_unoccupied_places(1, 3, 5, 7):
             position = random.choice(check_unoccupied_places(1, 3, 5, 7))
-            update_board(position)
+            update_board(o=position)
     elif player_char["Computer"] == "X":
         if get_winning_move("X") is not None and check_unoccupied_places(get_winning_move("X")):
             position = get_winning_move("X")
@@ -199,7 +199,7 @@ def main():
         update_board()
         print("It's your turn.")
     while True:
-        choice = input("Please select an unoccupied position :  ")
+        choice = input("Select an unoccupied position :  ")
         if check_input(choice) is None:
             if player_char["User"] == "X":
                 update_board(x=int(choice))
@@ -214,8 +214,8 @@ def main():
             break
 
         computer_move = make_computer_move()
-        print(f"Computer selected {computer_move} on board.")
-
+        if computer_move is not None:
+            print(f"Computer selected {computer_move} on board.")
         if check_winner(player_char["Computer"]) == 1:
             print(colored("Computer won!", "magenta"))
             break
