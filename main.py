@@ -1,7 +1,7 @@
+import os
 import random
 from time import sleep
 from termcolor import colored
-from os import system
 
 # Create Default Board
 board = {}
@@ -15,6 +15,18 @@ wining_cases = [[0, 1, 2], [3, 4, 5], [6, 7, 8],  # Horizontal cases
 player_char = {"Computer": "", "User": ""}
 
 
+def clear_terminal():
+    """
+    Clears terminal due to the os that user is using.
+    :return: None
+    """
+
+    if os.name == "nt":
+        os.system("cls")
+    elif os.name == "posix":
+        os.system("clear")
+
+
 def update_board(x=None, o=None):
     """
     Prints X or O on game board according to values of x and o params.
@@ -22,7 +34,7 @@ def update_board(x=None, o=None):
     :param o: Position of O on board
     :return: None
     """
-    system("clear")  # Clear the console
+    clear_terminal()  # Clear the console
     x_char = colored('X', 'blue')  # Set color of X
     o_char = colored('O', 'red')  # Set color of O
     if x is not None:
@@ -76,6 +88,7 @@ def get_winning_move(player):
     :return: Position number that can make player winner of game.
     It returns None when there is no way to win.
     """
+    winning_moves = []
     selected = get_selected_places(player)
     lt = []  # List of every two elements (as tuple) of selected list.
     # Find cases of every two elements of selected list.
@@ -89,7 +102,10 @@ def get_winning_move(player):
     for case in wining_cases:
         for i in lt:
             if set(case).intersection(set(i)) == set(i):
-                return list(set(case).difference(set(i)))[0]
+                winning_moves.append(list(set(case).difference(set(i)))[0])
+    for i in winning_moves:
+        if check_unoccupied_places(i):
+            return i
     return None
 
 
@@ -185,10 +201,10 @@ def determine_player_character():
 
 
 def main():
-    system("clear")
+    clear_terminal()
     print(colored("<< Welcome to Tic-tac-toe Game >>", "green"))
     sleep(3)
-    system("clear")
+    clear_terminal()
     determine_player_character()
     # Determine randomly whether the computer or the player goes first.
     turn = random.choice([0, 1])  # 0 => User , 1 => Computer
